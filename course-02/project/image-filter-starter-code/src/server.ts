@@ -1,4 +1,4 @@
-import express from 'express';
+import express, {Request, Response} from 'express';
 import bodyParser from 'body-parser';
 import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
@@ -17,7 +17,6 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   // GET /filteredimage?image_url={{URL}}
   // endpoint to filter an image from a public url.
   // IT SHOULD
-  //    1
   //    1. validate the image_url query
   //    2. call filterImageFromURL(image_url) to filter the image
   //    3. send the resulting file in the response
@@ -28,6 +27,23 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   //   the filtered image file [!!TIP res.sendFile(filteredpath); might be useful]
 
   /**************************************************************************** */
+  async function getImageFromUrl(req: Request, res: Response) {
+    const url = req.query.image_url;
+    if (!url) {
+      return res.status(400).send({message: "Missing image_url!"});
+    }
+
+    try {
+      const image = await filterImageFromURL(url);
+      res.status(200).sendFile(image, () => {deleteLocalFiles([image])});
+    } catch (e) {
+      console.log('Error:', e);
+      return res.status(500).send({message: "Fail to process image_url"});
+    }
+
+  }
+
+  app.get("/filteredimage", getImageFromUrl);
 
   //! END @TODO1
   
