@@ -25,6 +25,10 @@ async function comparePasswords(plainTextPassword: string, hash: string): Promis
 }
 
 function generateJWT(user: User): string {
+<<<<<<< HEAD
+=======
+    //@TODO Use jwt to create a new JWT Payload containing
+>>>>>>> upstream/master
     return jwt.sign(user.toJSON(), config.jwt.secret);
 }
 
